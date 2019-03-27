@@ -65,6 +65,14 @@ scrapeRating <- function(x) {
   climbRating <- str_trim(gsub("\n", "", html_text(html_node(read_html(x), '#route-star-avg span')))) 
   return(climbRating)
 }
+
+scrapeFullLoc <- function (x) {
+  options(timeout= 4000000)
+  climbFullLoc <- html_text(html_node(read_html(x), '.max-height-xs-600:nth-child(2) .fr-view'))
+  return(climbLoc)
+}
+
+html_text(html_node(read_html("https://www.mountainproject.com/route/105945043/ride-the-lightning"), '.mb-half.text-warm'))
 ```
 
 
