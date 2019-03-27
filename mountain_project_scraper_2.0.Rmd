@@ -1,0 +1,159 @@
+---
+title: "DS4100_Final_Project_Scraper - Duncan Muir"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(root.dir = "/Users/duncanmuir/Documents/Classwork/S19/CS3200/FinalProj")
+library(tidyverse)
+library(XML)
+library(xml2)
+library(rvest)
+```
+
+```{r}
+scrapeName <- function(x) {
+  options(timeout= 4000000)
+  climbName <- str_trim(html_text(html_node(read_html(x), 'h1')))
+  return(climbName)
+}
+
+scrapeGrade <- function(x) {
+  options(timeout= 4000000)
+  climbGrade <-  
+    html_text(html_node(read_html(x), '.mr-2'))
+  return(climbGrade)
+}
+
+scrapeDesc <- function (x) {
+  options(timeout= 4000000)
+  climbDesc <- html_text(html_node(read_html(x), '.max-height-xs-600:nth-child(1) .fr-view'))
+  return(climbDesc)
+}
+
+scrapeLoc <- function (x) {
+  options(timeout= 4000000)
+  climbLoc <- html_text(html_node(read_html(x), '.max-height-xs-600:nth-child(2) .fr-view'))
+  return(climbLoc)
+}
+
+scrapePro <- function (x) {
+  options(timeout= 4000000)
+  climbPro <- html_text(html_node(read_html(x), '.max-height-xs-600~ .max-height-xs-600+ .max-height-xs-600 .fr-view'))
+  return(climbPro)
+}
+
+
+scrapeFA <- function(x) {
+  options(timeout= 4000000)
+  climbFA <- html_text(html_node(read_html(x), '.description-details tr:nth-child(2) td+ td'))
+  climbFA <- gsub("\n","",climbFA)
+  climbFA <- str_trim(climbFA)
+  return(climbFA)
+}
+
+
+scrapeTicks <- function(x) {
+  options(timeout= 4000000)
+  climbTicks <- html_text(html_node(read_html(x), '.col-sm-8 .text-muted'))
+  return(climbTicks)
+}
+
+scrapeRating <- function(x) {
+  options(timeout= 4000000)
+  climbRating <- str_trim(gsub("\n", "", html_text(html_node(read_html(x), '#route-star-avg span')))) 
+  return(climbRating)
+}
+```
+
+
+
+```{r}
+scrapeLinks <- function(url){
+  options(timeout= 4000000)
+  # Create an html document from the url
+  webpage <- xml2::read_html(url)
+  # Extract the URLs
+  url_ <- webpage %>%
+    html_nodes("a") %>%
+    html_attr("href")
+  # Extract the link text
+  link_ <- webpage %>%
+    html_nodes("a") %>%
+    html_text()
+  return(data_frame(link = link_, url = url_))
+}
+
+getClimbData <- function(x,y) {
+  options(timeout= 4000000)
+  x <- as.character(x)
+  y <- as.character(y)
+  names <- sapply(x, scrapeName)
+  grades <- sapply(x, scrapeGrade)
+  fas <- sapply(x, scrapeFA)
+  descs <- sapply(x, scrapeDesc)
+  locs <- sapply(x, scrapeLoc)
+  pro <- sapply(x, scrapePro)
+  ticks <- sapply(y, scrapeTicks)
+  ratings <- sapply(y, scrapeRating)
+  df <- data.frame("names" = names, 
+                   "grades" = grades, 
+                   "FA" = fas, 
+                   "descriptions" = descs,
+                   "location" = locs,
+                   "protection" = pro, 
+                   "ticks" = ticks, 
+                   "ratings" = ratings, 
+                   row.names = NULL)
+  return(df)
+}
+
+
+```
+
+
+Gets Route Links and Stats Links for Given query
+```{r}
+mp_scraper <- function(x) {
+  options(timeout= 4000000)
+  all_links <- scrapeLinks(x)
+  route_links <- filter(all_links, grepl("/route/", url))
+  route_and_stats_links <- data.frame("route_urls" = as.character(unique(route_links$url)), 
+                       "stat_urls" = as.character(gsub("/route/", "/route/stats/", unique(route_links$url))))
+  climb_df <- getClimbData(route_and_stats_links[,1], route_and_stats_links[,2])
+  return(climb_df)
+}
+```
+
+
+
+
+# Urls
+```{r}
+storm_boulder_url <- "https://www.mountainproject.com/route-finder?selectedIds=106523385&type=boulder&diffMinrock=1800&diffMinboulder=20000&diffMinaid=70000&diffMinice=30000&diffMinmixed=50000&diffMaxrock=5500&diffMaxboulder=21400&diffMaxaid=75260&diffMaxice=36500&diffMaxmixed=60000&is_trad_climb=1&is_sport_climb=1&is_top_rope=1&stars=0&pitches=0&sort1=popularity+desc&sort2=rating"
+
+RTL <- "https://www.mountainproject.com/route/105945043/ride-the-lightning"  
+```
+
+```{r}
+storm_boulders_data <- mp_scraper(storm_boulder_url)
+write.csv(storm_boulders_data, file = "./FinalProj/storm_boulders_data_raw.csv")
+
+```
+
+cleaning
+```{r}
+sb_clean <- read.csv("./FinalProj/storm_boulders_data_raw.csv")
+sb_clean <- select(sb_clean, -X)
+sb_splitratings <- str_split(sb_clean$ratings, " ")
+sb_clean$avg.rating <- as.numeric(unlist(lapply(sb_splitratings, `[`, 2)))
+sb_clean$votes <- as.numeric(unlist(lapply(sb_splitratings, `[`, 4)))
+sb_clean <- select(sb_clean, -avg.rating)
+sb_clean$grades <- as.character(unlist(lapply(str_split(sb_clean$grades, " "), `[`,1)))
+sb_clean$ticks[is.na(sb_clean$ticks)] <- 0
+```
+
+```{r}
+write.csv(sb_clean, file = "./FinalProj/storm_boulders_data_clean.csv")
+```
