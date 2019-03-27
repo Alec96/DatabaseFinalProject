@@ -1,17 +1,17 @@
 ---
-title: "DS4100_Final_Project_Scraper - Duncan Muir"
+title: "CS3200 Final Proj - Duncan Muir"
 output: html_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-knitr::opts_chunk$set(root.dir = "/Users/duncanmuir/Documents/Classwork/S19/CS3200/FinalProj")
 library(tidyverse)
 library(XML)
 library(xml2)
 library(rvest)
 ```
 
+# CSS Selector Functions
 ```{r}
 scrapeName <- function(x) {
   options(timeout= 4000000)
@@ -24,7 +24,7 @@ scrapeGrade <- function(x) {
   climbGrade <-  
     html_text(html_node(read_html(x), '.mr-2'))
   return(climbGrade)
-}
+} 
 
 scrapeDesc <- function (x) {
   options(timeout= 4000000)
@@ -44,7 +44,6 @@ scrapePro <- function (x) {
   return(climbPro)
 }
 
-
 scrapeFA <- function(x) {
   options(timeout= 4000000)
   climbFA <- html_text(html_node(read_html(x), '.description-details tr:nth-child(2) td+ td'))
@@ -52,7 +51,6 @@ scrapeFA <- function(x) {
   climbFA <- str_trim(climbFA)
   return(climbFA)
 }
-
 
 scrapeTicks <- function(x) {
   options(timeout= 4000000)
@@ -66,13 +64,8 @@ scrapeRating <- function(x) {
   return(climbRating)
 }
 
-scrapeFullLoc <- function (x) {
-  options(timeout= 4000000)
-  climbFullLoc <- html_text(html_node(read_html(x), '.max-height-xs-600:nth-child(2) .fr-view'))
-  return(climbLoc)
-}
 
-html_text(html_node(read_html("https://www.mountainproject.com/route/105945043/ride-the-lightning"), '.mb-half.text-warm'))
+
 ```
 
 
@@ -144,24 +137,23 @@ storm_boulder_url <- "https://www.mountainproject.com/route-finder?selectedIds=1
 RTL <- "https://www.mountainproject.com/route/105945043/ride-the-lightning"  
 ```
 
-```{r}
-storm_boulders_data <- mp_scraper(storm_boulder_url)
-write.csv(storm_boulders_data, file = "./FinalProj/storm_boulders_data_raw.csv")
 
-```
 
-cleaning
+# Cleaning
 ```{r}
-sb_clean <- read.csv("./FinalProj/storm_boulders_data_raw.csv")
+
+sb_clean <- read.csv("storm_boulders_data_raw.csv")
 sb_clean <- select(sb_clean, -X)
 sb_splitratings <- str_split(sb_clean$ratings, " ")
 sb_clean$avg.rating <- as.numeric(unlist(lapply(sb_splitratings, `[`, 2)))
 sb_clean$votes <- as.numeric(unlist(lapply(sb_splitratings, `[`, 4)))
-sb_clean <- select(sb_clean, -avg.rating)
-sb_clean$grades <- as.character(unlist(lapply(str_split(sb_clean$grades, " "), `[`,1)))
+sb_clean <- select(sb_clean, -ratings)
+
+sb_clean$grades <- gsub("V", "", sb_clean$grades)
+sb_clean$grades <- as.character(unlist(lapply(str_split(sb_clean$grades, "\\+|\\-|/| "), `[`,1)))
+
+
+
 sb_clean$ticks[is.na(sb_clean$ticks)] <- 0
 ```
 
-```{r}
-write.csv(sb_clean, file = "./FinalProj/storm_boulders_data_clean.csv")
-```
