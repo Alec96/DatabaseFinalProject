@@ -32,10 +32,10 @@ scrapeDesc <- function (x) {
   return(climbDesc)
 }
 
-scrapeLoc <- function (x) {
+scrapeBeta <- function (x) {
   options(timeout= 4000000)
-  climbLoc <- html_text(html_node(read_html(x), '.max-height-xs-600:nth-child(2) .fr-view'))
-  return(climbLoc)
+  climbBeta <- html_text(html_node(read_html(x), '.max-height-xs-600:nth-child(2) .fr-view'))
+  return(climbBeta)
 }
 
 scrapePro <- function (x) {
@@ -64,7 +64,30 @@ scrapeRating <- function(x) {
   return(climbRating)
 }
 
+```
 
+```{r}
+RTL_STAT <- "https://www.mountainproject.com/route/stats/105945043/ride-the-lightning"
+IJ <- "https://www.mountainproject.com/route/stats/113491812/indiana-jones"
+
+
+html_text(html_nodes(read_html(RTL), ".mb-half.text-warm a"))
+
+getSuggGradeTable<- function(x) {
+  tables <- html_table(html_nodes(read_html(x), "table"))
+  df <- bind_rows(tables)
+  df <- filter(df, !is.na(X2))
+  suggested_grades <- df[!grepl("\\,",df$X2),]
+  return(suggested_grades)
+}
+
+getCommentTable<- function(x) {
+  tables <- html_table(html_nodes(read_html(x), "table"))
+  df <- bind_rows(tables)
+  df <- filter(df, !is.na(X2))
+  tick_comments <- df[grepl("\\,",df$X2),]
+  return(tick_comments)
+}
 
 ```
 
@@ -94,7 +117,7 @@ getClimbData <- function(x,y) {
   grades <- sapply(x, scrapeGrade)
   fas <- sapply(x, scrapeFA)
   descs <- sapply(x, scrapeDesc)
-  locs <- sapply(x, scrapeLoc)
+  beta <- sapply(x, scrapeBeta)
   pro <- sapply(x, scrapePro)
   ticks <- sapply(y, scrapeTicks)
   ratings <- sapply(y, scrapeRating)
@@ -102,7 +125,7 @@ getClimbData <- function(x,y) {
                    "grades" = grades, 
                    "FA" = fas, 
                    "descriptions" = descs,
-                   "location" = locs,
+                   "beta" = beta,
                    "protection" = pro, 
                    "ticks" = ticks, 
                    "ratings" = ratings, 
@@ -110,7 +133,29 @@ getClimbData <- function(x,y) {
   return(df)
 }
 
+getAllComments <- function(stats, climb_names) {
+  options(timeout= 4000000)
+  stats <- as.character(stats)
+  listOfTables <- lapply(stats, getCommentTable)
+  try(
+    for (i in 1:length(listOfTables)) {
+      listOfTables[[i]]$climb_name <- climb_names[i]
+    }, silent = TRUE)
+  out <- bind_rows(listOfTables)
+  return(out)
+}
 
+getAllSuggestedGrades <- function(stats, climb_names) {
+  options(timeout = 4000000)
+  stats <- as.character(stats)
+  listOfTables <- lapply(stats, getSuggGradeTable)
+  try(
+    for (i in 1:length(listOfTables)) {
+      listOfTables[[i]]$climb_name <- climb_names[i]
+    }, silent = TRUE)
+  out <- bind_rows(listOfTables)
+  return(out)
+}
 ```
 
 
@@ -120,11 +165,19 @@ mp_scraper <- function(x) {
   options(timeout= 4000000)
   all_links <- scrapeLinks(x)
   route_links <- filter(all_links, grepl("/route/", url))
-  route_and_stats_links <- data.frame("route_urls" = as.character(unique(route_links$url)), 
-                       "stat_urls" = as.character(gsub("/route/", "/route/stats/", unique(route_links$url))))
-  climb_df <- getClimbData(route_and_stats_links[,1], route_and_stats_links[,2])
-  return(climb_df)
+  route_urls <- as.character(unique(route_links$url))
+  stat_urls <- as.character(gsub("/route/", "/route/stats/", route_urls))
+  climb_df <- getClimbData(route_urls, stat_urls)
+  comment_df <- getAllComments(stat_urls, climb_df$name)
+  sugg_grade_df <- getAllSuggestedGrades(stat_urls, climb_df$name)
+  all_tables <- list(climb_df,comment_df, sugg_grade_df)
+  return(all_tables)
 }
+test <- mp_scraper(storm_boulder_url)
+
+test_climb <- test[[1]]
+test_comment <- test[[2]]
+test_sugg_grade <- test [[3]]
 ```
 
 
@@ -137,6 +190,15 @@ storm_boulder_url <- "https://www.mountainproject.com/route-finder?selectedIds=1
 RTL <- "https://www.mountainproject.com/route/105945043/ride-the-lightning"  
 ```
 
+# Runs Scraper
+```{r}
+#storm_boulders_data <- mp_scraper(storm_boulder_url)
+setwd("/Users/duncanmuir/Documents/Classwork/S19/CS3200/FinalProj")
+write.csv(test_climb, file = "storm_boulders_data_raw_climbs.csv")
+write.csv(test_comment, file = "storm_boulders_data_raw_comments.csv")
+write.csv(test_sugg_grade, file = "storm_boulders_data_raw_sugg_grades.csv")
+
+```
 
 
 # Cleaning
