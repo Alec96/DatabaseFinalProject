@@ -1,9 +1,27 @@
 header {
     text-align: center;
 }
+
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+div div {
+    height: 100%;
+    width: 50%;
+}
+
+/*The main divs separating results and the inputs*/
 #results {
     float: left;
 }
+
 #inputs {
     float: right;
+    height: 400px;
+}
+
+.input {
+    height: 200px;
+    float: left;
 }
