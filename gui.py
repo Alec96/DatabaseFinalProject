@@ -1,11 +1,16 @@
-from PyQt5 import uic, QtWidgets #works for pyqt5
+from flask import Flask, render_template, request
+from DONTTOUCHME import token
+import mysql.connector
 
-import sys
+cnx = mysql.connector.connect(user='', password='',
+                              host='localhost',
+                              database='')
+cursor = cnx.cursor()
 
-app = QtWidgets.QApplication([])
+app = Flask(__name__)
 
-win = uic.loadUi("climbing_ui.ui")  # specify the location of your .ui file
+@app.route('/', methods=['GET', 'POST'])
+def main_method():
+    #cursor.execute(insertqueryhere)
 
-win.show()
-
-sys.exit(app.exec())
+    return render_template("climbing.html")
