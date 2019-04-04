@@ -10,17 +10,25 @@ div div {
     height: 100%;
     width: 50%;
 }
-
+select {
+    width: 100px;
+}
 /*The main divs separating results and the inputs*/
 #results {
     float: left;
+    border: 1px solid blue;
+    height: 100%;
+
 }
 
 #inputs {
     float: right;
     height: 400px;
+    border: 1px solid black;
 }
-
+#input_information {
+    float: left;
+}
 .input {
     height: 200px;
     float: left;
