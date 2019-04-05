@@ -1,14 +1,13 @@
 from flask import Flask, render_template, request
 from flask_bootstrap import Bootstrap
-import logging
-
+import config
 app = Flask(__name__)
-#import mysql.connector
+import mysql.connector
 
-# cnx = mysql.connector.connect(user='', password='',
-#                               host='localhost',
-#                               database='')
-# cursor = cnx.cursor()
+cnx = mysql.connector.connect(user=config.USER, password=config.PASSWORD,
+                              host=config.HOST,
+                              database=config.DATABASE)
+cursor = cnx.cursor()
 
 
 @app.route('/', methods=['GET'])
@@ -19,9 +18,12 @@ def getClimbs():
 
 @app.route('/', methods=['POST'])
 def queryClimbs():
-    #cursor.execute(insertqueryhere)
+    query = "Select title from book"
+    cursor.execute(query)
+    rows = cursor.fetchall()
+    for row in rows:
+        print(row)
     #return render_template("climbing.html")
-    logging.debug("sent a post request")
     style = request.form.get("style_select")
 
     min_rating = request.form.get("min_rating")
