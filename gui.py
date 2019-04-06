@@ -50,7 +50,7 @@ def queryClimbs():
     style = request.form.get("style_select")
 
     min_rating = request.form.get("min_rating")
-    max_rating = request.form.get("min_rating")
+    max_rating = request.form.get("max_rating")
 
     min_grade = request.form.get("min_grade")
     max_grade = request.form.get("max_grade")
