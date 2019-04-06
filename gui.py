@@ -29,8 +29,8 @@ def getClimbsQuery(name=None, style=None, min_grade=None, max_grade=None, min_ra
     if name is not "":
         where_clause.append("climb_name = %(name)s")
         params['name'] = name
-    if style is not None:
-        where_clause.append("type = %(style)s")
+    if style !=  "na":
+        where_clause.append("type_name = %(style)s")
         params['style'] = style
 
     sql = '{} WHERE {}'.format(query, ' AND '.join(where_clause))
@@ -50,7 +50,7 @@ def queryClimbs():
     style = request.form.get("style_select")
 
     min_rating = request.form.get("min_rating")
-    max_rating = request.form.get("min_rating")
+    max_rating = request.form.get("max_rating")
 
     min_grade = request.form.get("min_grade")
     max_grade = request.form.get("max_grade")
@@ -70,11 +70,18 @@ def queryClimbs():
     cursor.execute(query, params)
     rows = cursor.fetchall()
 
-
+    climb_arr = []
     for row in rows:
-        print(row)
+        climb = {}
+        climb['name'] = row[2]
+        climb['description'] = row[3]
+        climb['grade'] = row[6]
+        climb['rating'] = row[7]
+        climb['sandbag'] = row[10]
+        climb['style'] = row[11]
+        climb_arr.append(climb)
 
-    return render_template("mountainproject.html")
+    return render_template("mountainproject.html", climbs = climb_arr)
 
 if __name__ == "__main__":
     app.run()
