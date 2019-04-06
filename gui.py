@@ -11,24 +11,26 @@ cnx = mysql.connector.connect(user=config.USER, password=config.PASSWORD,
 cursor = cnx.cursor()
 
 def getClimbsQuery(name=None, style=None, min_grade=None, max_grade=None, min_rating=None, max_rating=None):
-    query = "Select * from climb"
+    query = "Select * from climb " \
+            "left join climb_type using(climb_id)" \
+            "left join type using(type_id)"
     where_clause = []
     params = {}
 
-    where_clause.append("grade >= :min_grade")
-    where_clause.append("grade <= :max_grade")
-    where_clause.append("quality_rating >= :min_rating")
-    where_clause.append("quality_rating <= :max_rating")
+    where_clause.append("grade >= %(min_grade)s")
+    where_clause.append("grade <= %(max_grade)s")
+    where_clause.append("avg_quality_rating >= %(min_rating)s")
+    where_clause.append("avg_quality_rating <= %(max_rating)s")
     params['min_grade'] = min_grade
     params['max_grade'] = max_grade
     params['min_rating'] = min_rating
     params['max_rating'] = max_rating
 
-    if name is not None:
-        where_clause.append("climb_name = :name")
+    if name is not "":
+        where_clause.append("climb_name = %(name)s")
         params['name'] = name
     if style is not None:
-        where_clause.append("style = :style")
+        where_clause.append("type = %(style)s")
         params['style'] = style
 
     sql = '{} WHERE {}'.format(query, ' AND '.join(where_clause))
@@ -36,8 +38,6 @@ def getClimbsQuery(name=None, style=None, min_grade=None, max_grade=None, min_ra
 
 @app.route('/', methods=['GET'])
 def getClimbs():
-    #cursor.execute(insertqueryhere)
-    #return render_template("climbing.html")
     return render_template("mountainproject.html")
 
 @app.route('/', methods=['POST'])
@@ -69,10 +69,10 @@ def queryClimbs():
     query, params = getClimbsQuery(name, style, min_grade, max_grade, min_rating, max_rating)
     cursor.execute(query, params)
     rows = cursor.fetchall()
+
+
     for row in rows:
         print(row)
-
-
 
     return render_template("mountainproject.html")
 
