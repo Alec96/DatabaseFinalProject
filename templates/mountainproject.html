@@ -14,12 +14,22 @@
         <table id="results_table">
             <tr>
                 <th>Name</th>
+                <th>Description</th>
                 <th>Grade</th>
-                <th>Review</th>
                 <th>Rating</th>
-                <th>Location</th>
+                <th>Style</th>
                 <th>Sandbagged</th>
             </tr>
+            {% for climb in climbs %}
+            <tr>
+                <th>{{climb.name}}</th>
+                <th>{{climb.description}}</th>
+                <th>{{climb.grade}}</th>
+                <th>{{climb.rating}}</th>
+                <th>{{climb.style}}</th>
+                <th>{{climb.sandbag}}</th>
+            </tr>
+            {% endfor %}
         </table>
     </div>
     <div id="inputs">
