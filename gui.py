@@ -4,6 +4,7 @@ import config
 import mysql.connector
 
 app = Flask(__name__)
+Bootstrap(app)
 
 cnx = mysql.connector.connect(user=config.USER, password=config.PASSWORD,
                               host=config.HOST,
@@ -29,11 +30,11 @@ def getClimbsQuery(name=None, style=None, min_grade=None, max_grade=None, min_ra
     if name is not "":
         where_clause.append("climb_name = %(name)s")
         params['name'] = name
-    if style !=  "na":
+    if style !=  "not applicable":
         where_clause.append("type_name = %(style)s")
         params['style'] = style
 
-    sql = '{} WHERE {}'.format(query, ' AND '.join(where_clause))
+    sql = '{} WHERE {}'.format(query, ' AND '.join(where_clause)) + " order by grade"
     return sql, params
 
 @app.route('/', methods=['GET'])
@@ -45,7 +46,7 @@ def queryClimbs():
 
 
     #return render_template("climbing.html")
-    name = request.form.get("climb_name")
+    name = request.form.get("climb_name_input")
 
     style = request.form.get("style_select")
 
@@ -56,16 +57,6 @@ def queryClimbs():
     max_grade = request.form.get("max_grade")
 
     height = request.form.get("height")
-    if min_grade == "na":
-        min_grade = 0
-    if max_grade == "na":
-        max_grade = 13
-
-    if min_rating == "na":
-        min_rating = 0
-    if max_rating == "na":
-        max_rating = 4
-
     query, params = getClimbsQuery(name, style, min_grade, max_grade, min_rating, max_rating)
     cursor.execute(query, params)
     rows = cursor.fetchall()

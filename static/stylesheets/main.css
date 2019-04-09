@@ -16,20 +16,15 @@ select {
 /*The main divs separating results and the inputs*/
 #results {
     float: left;
-    border: 1px solid blue;
     height: 100%;
 
 }
-
 #inputs {
     float: right;
-    height: 400px;
-    border: 1px solid black;
 }
-#input_information {
-    float: left;
-}
-.input {
-    height: 200px;
-    float: left;
-}
+/*#input_information {*/
+    /*float: left;*/
+/*}*/
+/*.input {*/
+    /*float: left;*/
+/*}*/
