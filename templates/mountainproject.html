@@ -2,12 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" media="screen" href = "{{ url_for('static', filename='stylesheets/bootstrap/css/bootstrap.min.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylesheets/main.css') }}">
     <title>Mountain Project V2.0</title>
 </head>
-<header>
-    Mountain Project V2.0
-</header>
+<div class="jumbotron">
+    <h1>Mountain Project V2.0</h1>
+</div>
 <body>
 <div id="climbs_container">
     <div id="results">
@@ -34,21 +35,20 @@
     </div>
     <div id="inputs">
         <form method="post">
-            <input type="text" name="climb_name">
+            <div class="form-group input">
+                <label for="climb_name_input">Name Search</label>
+                <input name="climb_name_input" id="climb_name_input" type="text" placeholder="Enter Climb Name">
+            </div>
             <div id="input_information">
-                <div class="input" name="height_input">
-                    Height Input
-                    <br>
-                    <select name="height">
-                        <option value="na">N/A</option>
-                    </select>
+                <div class="form-group input" name="height_input">
+                    <label for="height">Height Input</label>
+                    <input type="text" id="height">
+                    <small id="heightHelp" class="form-text text-muted">Please enter your height in centimeters.</small>
                 </div>
-                <div class="input" name="grade_input">
-                    Grade Input
-                    <br><br>
-                    Minimum Grade
-                    <select name="min_grade">
-                        <option value="na">N/A</option>
+                <label for="grade_input">Grade Input</label>
+                <div class="form-group input" name="grade_input" id="grade_input">
+                    <label for="min_grade">Minimum Grade</label>
+                    <select name="min_grade" id="min_grade">
                         <option value="1">V1</option>
                         <option value="2">V2</option>
                         <option value="3">V3</option>
@@ -63,10 +63,8 @@
                         <option value="12">V12</option>
                         <option value="13">V13</option>
                     </select>
-                    <br>
-                    Maximum Grade
-                    <select name="max_grade">
-                        <option value="na">N/A</option>
+                    <label for="max_grade">Maximum Grade</label>
+                    <select name="max_grade" id="max_grade">
                         <option value="1">V1</option>
                         <option value="2">V2</option>
                         <option value="3">V3</option>
@@ -79,35 +77,30 @@
                         <option value="10">V10</option>
                         <option value="11">V11</option>
                         <option value="12">V12</option>
-                        <option value="13">V13</option>
+                        <option value="13" selected>V13</option>
                     </select>
                 </div>
-                <div class="input" name="rating_input">
-                    Rating Input
-                    <br><br>
-                    Minimum Rating
-                    <select name="min_rating">
-                        <option value="na">N/A</option>
+                <label for="rating_input">Rating input</label>
+                <div class="form-group input" name="rating_input" id="rating_input">
+                    <label for="min_rating">Minimum Rating</label>
+                    <select name="min_rating" id="min_rating">
                         <option value="1">1</option>
                         <option value="2">2</option>
                         <option value="3">3</option>
                         <option value="4">4</option>
                     </select>
-                    <br>
-                    Maximum Rating
-                    <select name="max_rating">
-                        <option value="na">N/A</option>
+                    <label for="max_rating">Maximum Rating</label>
+                    <select name="max_rating" id="max_rating">
                         <option value="1">1</option>
                         <option value="2">2</option>
                         <option value="3">3</option>
-                        <option value="4">4</option>
+                        <option value="4" selected>4</option>
                     </select>
                 </div>
-                <div class="input" name="style_input">
-                    Style Input
-                    <br>
-                    <select name="style_select">
-                        <option value="na">N/A</option>
+                <div class="input" name="style_input" id="style_input">
+                    <label for="style_select">Select Style</label>
+                    <select name="style_select" id="style_select">
+                        <option value="not applicable">N/A</option>
                         <option value="crimpy">Crimpy</option>
                         <option value="slopey">Slopey</option>
                         <option value="pockets">Pockets</option>
