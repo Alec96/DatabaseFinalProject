@@ -11,13 +11,13 @@ cnx = mysql.connector.connect(user=config.USER, password=config.PASSWORD,
                               database=config.DATABASE)
 cursor = cnx.cursor()
 
-def getClimbsQuery(name=None, style=None, min_grade=None, max_grade=None, min_rating=None, max_rating=None):
-    query = "Select * from climb " \
+def getClimbsQuery(name="", style="not applicable", min_grade=1, max_grade=13, min_rating=1, max_rating=4, height=""):
+    query = "Select * from climb as init_climb " \
             "left join climb_type using(climb_id)" \
             "left join type using(type_id)"
+    height = int(height)
     where_clause = []
     params = {}
-
     where_clause.append("grade >= %(min_grade)s")
     where_clause.append("grade <= %(max_grade)s")
     where_clause.append("avg_quality_rating >= %(min_rating)s")
@@ -34,7 +34,13 @@ def getClimbsQuery(name=None, style=None, min_grade=None, max_grade=None, min_ra
         where_clause.append("type_name = %(style)s")
         params['style'] = style
 
-    sql = '{} WHERE {}'.format(query, ' AND '.join(where_clause)) + " order by grade"
+    sql = '{} WHERE {}'.format(query, ' AND '.join(where_clause));
+
+    if height is not "":
+        sql = sql + " having (select count(*) from user_climb " \
+                    "left join user using(user_id) " \
+                    "where climb_id = init_climb.climb_id and " \
+                    "user_height >= " + str(height-5) + " and user_height <= " + str(height+5) + ") > 1"
     return sql, params
 
 @app.route('/', methods=['GET'])
@@ -57,7 +63,7 @@ def queryClimbs():
     max_grade = request.form.get("max_grade")
 
     height = request.form.get("height")
-    query, params = getClimbsQuery(name, style, min_grade, max_grade, min_rating, max_rating)
+    query, params = getClimbsQuery(name, style, min_grade, max_grade, min_rating, max_rating, height)
     cursor.execute(query, params)
     rows = cursor.fetchall()
 
@@ -66,9 +72,9 @@ def queryClimbs():
         climb = {}
         climb['name'] = row[2]
         climb['description'] = row[3]
-        climb['grade'] = row[6]
+        climb['grade'] = "V" + str(row[6])
         climb['rating'] = row[7]
-        climb['sandbag'] = row[10]
+        climb['Grade Accuracy'] = row[10]
         climb['style'] = row[11]
         climb_arr.append(climb)
 
