@@ -15,7 +15,10 @@ def getClimbsQuery(name="", style="not applicable", min_grade=1, max_grade=13, m
     query = "Select * from climb as init_climb " \
             "left join climb_type using(climb_id)" \
             "left join type using(type_id)"
-    height = int(height)
+    try:
+        height =  int(height)
+    except:
+        height = ""
     where_clause = []
     params = {}
     where_clause.append("grade >= %(min_grade)s")
@@ -41,6 +44,7 @@ def getClimbsQuery(name="", style="not applicable", min_grade=1, max_grade=13, m
                     "left join user using(user_id) " \
                     "where climb_id = init_climb.climb_id and " \
                     "user_height >= " + str(height-5) + " and user_height <= " + str(height+5) + ") > 1"
+    sql = sql + " order by avg_quality_rating desc"
     return sql, params
 
 @app.route('/', methods=['GET'])
@@ -50,8 +54,6 @@ def getClimbs():
 @app.route('/', methods=['POST'])
 def queryClimbs():
 
-
-    #return render_template("climbing.html")
     name = request.form.get("climb_name_input")
 
     style = request.form.get("style_select")
