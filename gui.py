@@ -19,6 +19,7 @@ def getClimbsQuery(name="", style="not applicable", min_grade=1, max_grade=13, m
         height =  int(height)
     except:
         height = ""
+
     where_clause = []
     params = {}
     where_clause.append("grade >= %(min_grade)s")
@@ -30,7 +31,7 @@ def getClimbsQuery(name="", style="not applicable", min_grade=1, max_grade=13, m
     params['min_rating'] = min_rating
     params['max_rating'] = max_rating
 
-    if name is not "":
+    if name is not "" and not name.isspace():
         where_clause.append("climb_name = %(name)s")
         params['name'] = name
     if style !=  "not applicable":
