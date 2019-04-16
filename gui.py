@@ -90,9 +90,9 @@ def queryClimbs():
         if gradeDif is None:
             gradeDif = "No Suggested Ratings"
         elif gradeDif >= .5:
-            gradeDif = "Easier than stated"
+            gradeDif = "Soft"
         elif gradeDif <= -.5:
-            gradeDif = "Harder than stated"
+            gradeDif = "Sandbagged"
         else:
             gradeDif = "Accurate"
 
