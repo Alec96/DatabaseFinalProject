@@ -16,19 +16,21 @@
             <tr>
                 <th>Name</th>
                 <th>Description</th>
+                <th>Beta</th>
                 <th>Grade</th>
                 <th>Rating</th>
                 <th>Style</th>
-                <!--<th>Sandbagged</th>-->
+                <th>Grade Accuracy</th>
             </tr>
             {% for climb in climbs %}
             <tr>
                 <th>{{climb.name}}</th>
                 <th>{{climb.description}}</th>
+                <th>{{climb.beta}}</th>
                 <th>{{climb.grade}}</th>
                 <th>{{climb.rating}}</th>
                 <th>{{climb.style}}</th>
-                <!--<th>{{climb.sandbag}}</th> -->
+                <th>{{climb.grade_accuracy}}</th>
             </tr>
             {% endfor %}
         </table>
@@ -84,6 +86,7 @@
                 <div class="form-group input" name="rating_input" id="rating_input">
                     <label for="min_rating">Minimum Rating</label>
                     <select name="min_rating" id="min_rating">
+                        <option value="0">0</option>
                         <option value="1">1</option>
                         <option value="2">2</option>
                         <option value="3">3</option>
@@ -91,6 +94,7 @@
                     </select>
                     <label for="max_rating">Maximum Rating</label>
                     <select name="max_rating" id="max_rating">
+                        <option value="0">0</option>
                         <option value="1">1</option>
                         <option value="2">2</option>
                         <option value="3">3</option>
@@ -103,7 +107,9 @@
                         <option value="not applicable">N/A</option>
                         <option value="crimpy">Crimpy</option>
                         <option value="slopey">Slopey</option>
-                        <option value="pockets">Pockets</option>
+                        <option value="pockety">Pockety</option>
+                        <option value="pinchy">Pinchy</option>
+                        <option value="juggy">Juggy</option>
                     </select>
                 </div>
             </div>
