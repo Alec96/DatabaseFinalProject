@@ -12,13 +12,13 @@ cnx = mysql.connector.connect(user=config.USER, password=config.PASSWORD,
 cursor = cnx.cursor()
 
 def getClimbsQuery(name="", style="not applicable", min_grade=1, max_grade=13, min_rating=1, max_rating=4, height=""):
-    query = "Select climb_name, climb_description, beta, grade, avg_quality_rating, (grade - avg_sugg_grade), group_concat(type_name)" \
-            " from climb as init_climb " \
-            "left join climb_type using(climb_id)" \
+    query = "Select climb_name, climb_description, beta, grade, avg_quality_rating, (grade - avg_sugg_grade), group_concat(type_name) " \
+            "from climb " \
+            "left join climb_type using(climb_id) " \
             "left join type using(type_id) " \
             "left join (select climb_id, AVG(suggested_grade) as avg_sugg_grade " \
             "from suggested_grade " \
-            "group by climb_id) as sugg_grade_by_climb using (climb_id)"
+            "group by climb_id) as sugg_grade_by_climb using (climb_id) "
 
 
     try:
@@ -47,11 +47,15 @@ def getClimbsQuery(name="", style="not applicable", min_grade=1, max_grade=13, m
     sql = '{} WHERE {}'.format(query, ' AND '.join(where_clause));
 
     if height is not "":
-        sql = sql + " having (select count(*) from user_climb " \
+        sql = sql + " group by climb_id " \
+                    "having (select count(*) " \
+                    "from user_climb as height_climbs " \
                     "left join user using(user_id) " \
-                    "where climb_id = init_climb.climb_id and " \
+                    "where height_climbs.climb_id = climb_id and " \
                     "user_height >= " + str(height-5) + " and user_height <= " + str(height+5) + ") > 1"
-    sql = sql + " group by climb_id order by avg_quality_rating desc"
+    else:
+        sql = sql + "group by climb_id"
+    sql = sql + " order by avg_quality_rating desc"
     return sql, params
 
 @app.route('/', methods=['GET'])
