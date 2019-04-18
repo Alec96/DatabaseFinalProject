@@ -57,7 +57,6 @@ def getClimbsQuery(name="", style="not applicable", min_grade=1, max_grade=13, m
     else:
         sql = sql + " group by climb_id"
     sql = sql + " order by avg_quality_rating desc"
-    print(sql)
     return sql, params
 
 @app.route('/', methods=['GET'])
@@ -78,6 +77,7 @@ def queryClimbs():
     query, params = getClimbsQuery(name, style, min_grade, max_grade, min_rating, max_rating, height)
     cursor.execute(query, params)
     rows = cursor.fetchall()
+    print(style)
 
     climb_arr = []
     for row in rows:
@@ -99,7 +99,7 @@ def queryClimbs():
             gradeDif = "Accurate"
 
         climb['grade_accuracy'] = gradeDif
-        climb['style'] = row[6]
+        climb['style'] = ', '.join(str(row[6]).split(','))
         climb_arr.append(climb)
 
     return render_template("mountainproject.html", climbs = climb_arr)

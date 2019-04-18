@@ -25,32 +25,32 @@
             </tr>
             {% for climb in climbs %}
             <tr>
-                <td>{{climb.name}}</td>
-                <td>{{climb.description}}</td>
-                <td>{{climb.beta}}</td>
-                <td>{{climb.grade}}</td>
-                <td>{{climb.rating}}</td>
-                <td>{{climb.style}}</td>
-                <td>{{climb.grade_accuracy}}</td>
+                <td class="cell-sm">{{climb.name}}</td>
+                <td class="cell-lrg">{{climb.description}}</td>
+                <td class="cell-lrg">{{climb.beta}}</td>
+                <td class="cell-sm">{{climb.grade}}</td>
+                <td class="cell-sm">{{climb.rating}}</td>
+                <td class="cell-sm">{{climb.style}}</td>
+                <td class="cell-sm">{{climb.grade_accuracy}}</td>
             </tr>
             {% endfor %}
         </table>
     </div>
     <div id="inputs">
-        <form method="post">
+        <form method="post" >
             <div class="form-group input">
-                <label for="climb_name_input">Name Search</label>
+                <label class="main-label" climb_name_input">Name Search</label>
                 <input name="climb_name_input" id="climb_name_input" type="text" placeholder="Enter Climb Name">
             </div>
             <div id="input_information">
                 <div class="form-group input" name="height_input">
-                    <label for="height">Height Input</label>
+                    <label class="main-label" for="height">Height Input</label>
                     <input type="text" id="height" name="height">
                     <small id="heightHelp" class="form-text text-muted">Please enter your height in centimeters.</small>
                 </div>
-                <label for="grade_input">Grade Input</label>
+                <label class="main-label" for="grade_input">Grade Input</label>
                 <div class="form-group input" name="grade_input" id="grade_input">
-                    <label for="min_grade">Minimum Grade</label>
+                    <label class="sub-label" for="min_grade">Minimum Grade</label>
                     <select name="min_grade" id="min_grade">
                         <option value="1">V1</option>
                         <option value="2">V2</option>
@@ -66,7 +66,7 @@
                         <option value="12">V12</option>
                         <option value="13">V13</option>
                     </select>
-                    <label for="max_grade">Maximum Grade</label>
+                    <label class="sub-label" for="max_grade">Maximum Grade</label>
                     <select name="max_grade" id="max_grade">
                         <option value="1">V1</option>
                         <option value="2">V2</option>
@@ -83,9 +83,9 @@
                         <option value="13" selected>V13</option>
                     </select>
                 </div>
-                <label for="rating_input">Rating input</label>
+                <label class="main-label" for="rating_input">Rating input</label>
                 <div class="form-group input" name="rating_input" id="rating_input">
-                    <label for="min_rating">Minimum Rating</label>
+                    <label class="sub-label" for="min_rating">Minimum Rating</label>
                     <select name="min_rating" id="min_rating">
                         <option value="0">0</option>
                         <option value="1">1</option>
@@ -93,7 +93,7 @@
                         <option value="3">3</option>
                         <option value="4">4</option>
                     </select>
-                    <label for="max_rating">Maximum Rating</label>
+                    <label class="sub-label" for="max_rating">Maximum Rating</label>
                     <select name="max_rating" id="max_rating">
                         <option value="0">0</option>
                         <option value="1">1</option>
@@ -103,7 +103,7 @@
                     </select>
                 </div>
                 <div class="input" name="style_input" id="style_input">
-                    <label for="style_select">Select Style</label>
+                    <label class="main-label" style_select">Select Style</label>
                     <select name="style_select" id="style_select">
                         <option value="not applicable">N/A</option>
                         <option value="crimpy">Crimpy</option>
@@ -114,7 +114,7 @@
                     </select>
                 </div>
             </div>
-            <button type="submit">Query</button>
+            <button id="query-button" type="submit">Query</button>
         </form>
     </div>
 </div>
