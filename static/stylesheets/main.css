@@ -7,7 +7,16 @@ div div {
     width: 50%;
 }
 select {
-    width: 100px;
+    width: 100%;
+}
+
+.input {
+    width:100%
+}
+
+form {
+    background-color: lightgray;
+    width: 80%;
 }
 
 /*The main divs separating results and the inputs*/
