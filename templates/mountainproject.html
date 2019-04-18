@@ -8,29 +8,30 @@
 </head>
 <div class="jumbotron">
     <h1>Mountain Project V2.0</h1>
+
 </div>
 <body>
 <div id="climbs_container">
     <div id="results">
         <table id="results_table">
             <tr>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Beta</th>
-                <th>Grade</th>
-                <th>Rating</th>
-                <th>Style</th>
-                <th>Grade Accuracy</th>
+                <th class="col-small">Name</th>
+                <th class="col-medium">Description</th>
+                <th class="col-medium">Beta</th>
+                <th class="col-small">Grade</th>
+                <th class="col-small">Rating</th>
+                <th class="col-small">Style</th>
+                <th class="col-small">Grade Accuracy</th>
             </tr>
             {% for climb in climbs %}
             <tr>
-                <th>{{climb.name}}</th>
-                <th>{{climb.description}}</th>
-                <th>{{climb.beta}}</th>
-                <th>{{climb.grade}}</th>
-                <th>{{climb.rating}}</th>
-                <th>{{climb.style}}</th>
-                <th>{{climb.grade_accuracy}}</th>
+                <td>{{climb.name}}</td>
+                <td>{{climb.description}}</td>
+                <td>{{climb.beta}}</td>
+                <td>{{climb.grade}}</td>
+                <td>{{climb.rating}}</td>
+                <td>{{climb.style}}</td>
+                <td>{{climb.grade_accuracy}}</td>
             </tr>
             {% endfor %}
         </table>

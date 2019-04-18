@@ -8,7 +8,8 @@ Bootstrap(app)
 
 cnx = mysql.connector.connect(user=config.USER, password=config.PASSWORD,
                               host=config.HOST,
-                              database=config.DATABASE)
+                              database=config.DATABASE,
+                              auth_plugin='mysql_native_password')
 cursor = cnx.cursor()
 
 def getClimbsQuery(name="", style="not applicable", min_grade=1, max_grade=13, min_rating=1, max_rating=4, height=""):
@@ -38,8 +39,8 @@ def getClimbsQuery(name="", style="not applicable", min_grade=1, max_grade=13, m
     params['max_rating'] = max_rating
 
     if name is not "" and not name.isspace():
-        where_clause.append("climb_name = %(name)s")
-        params['name'] = name
+        where_clause.append("climb_name like %(name)s")
+        params['name'] = '%'+name+'%'
     if style !=  "not applicable":
         where_clause.append("type_name = %(style)s")
         params['style'] = style
@@ -54,8 +55,9 @@ def getClimbsQuery(name="", style="not applicable", min_grade=1, max_grade=13, m
                     "where height_climbs.climb_id = climb_id and " \
                     "user_height >= " + str(height-5) + " and user_height <= " + str(height+5) + ") > 1"
     else:
-        sql = sql + "group by climb_id"
+        sql = sql + " group by climb_id"
     sql = sql + " order by avg_quality_rating desc"
+    print(sql)
     return sql, params
 
 @app.route('/', methods=['GET'])
