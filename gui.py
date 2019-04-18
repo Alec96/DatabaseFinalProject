@@ -56,8 +56,8 @@ def getClimbsQuery(name="", style="not applicable", min_grade=1, max_grade=13, m
                     "user_height >= " + str(height-5) + " and user_height <= " + str(height+5) + ") > 1"
     else:
         sql = sql + " group by climb_id"
+
     sql = sql + " order by avg_quality_rating desc"
-    print(sql)
     return sql, params
 
 @app.route('/', methods=['GET'])
