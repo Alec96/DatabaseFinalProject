@@ -1,51 +1,4 @@
-table, th, td {
-    border: 1px solid black;
-    border-collapse: collapse;
-}
-div div {
-    height: 100%;
-    width: 50%;
-}
-select {
-    width: 100%;
-}
-
-.input {
-    width:100%
-}
-
-form {
-    background-color: lightgray;
-    width: 80%;
-}
-
-/*The main divs separating results and the inputs*/
-#results {
-    float: left;
-    height: 100%;
-    width: 70%;
-
-}
-#inputs {
-    float: right;
-    width: 25%;
-}
-
-#results_table {
-    table-layout:;
-    width: 100%;
-}
-
-#results_table tr th {
-    background-color: #0056b3;
-    color: white;
-}
-
-#results_table tr td {
-    background-color: #1e7e34;
-    color: white;
-}
-
+/* creates header */
 .jumbotron {
     border-radius: 0;
     background-image:url("../images/resident-evil.jpg");
@@ -55,21 +8,102 @@ form {
     color: white;
 }
 
+/* splits screen into two divs */
+div div {
+    height: 100%;
+    width: 50%;
+}
+
+/* resizes divs*/
+#results {
+    float: left;
+    height: 100%;
+    width: 70%;
+}
+#inputs {
+    float: right;
+    width: 23%;
+}
+
+
+
+/*========================
+   Results Table Styling
+ =========================*/
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+    margin: 10px;
+}
 .col-small {
     width:2%;
     text-align: center;
 }
-
 .col-medium {
     width:20%;
     text-align: center;
 }
+.cell-lrg {
+    text-align: justify;
+}
+
+.cell-sm {
+    text-align: center;
+}
+#results_table {
+    table-layout:;
+    width: 100%;
+}
+#results_table tr th {
+    background-color: #0056b3;
+    color: white;
+}
+#results_table tr td {
+    background-color: #1e7e34;
+    color: white;
+    padding: 5px;
+}
 
 
 
-/*#input_information {*/
-    /*float: left;*/
-/*}*/
-/*.input {*/
-    /*float: left;*/
-/*}*/
+/*=================
+   Input Styling
+ ==================*/
+select {
+    width: 100%;
+    margin-left: 20px;
+}
+form {
+    background-color: lightgray;
+    width: 70%;
+    border: 1px solid gray;
+    border-radius: 5px;
+    box-shadow: 3px 2px gray;
+}
+.input {
+    width:100%
+}
+.main-label {
+    margin-top: 5px;
+    font-weight: bold;
+    margin-left: 5px;
+    margin-bottom: 0px;
+}
+.sub-label {
+    font-style: italic;
+    margin-left: 10px;
+}
+#query-button {
+    margin:10px;
+    border-radius: 5px;
+}
+#height {
+    margin-left: 10px;
+}
+#heightHelp {
+    margin-left: 10px;
+    width: 120%
+}
+#climb_name_input {
+    margin-left: 10px;
+}

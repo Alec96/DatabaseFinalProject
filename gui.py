@@ -78,6 +78,7 @@ def queryClimbs():
     query, params = getClimbsQuery(name, style, min_grade, max_grade, min_rating, max_rating, height)
     cursor.execute(query, params)
     rows = cursor.fetchall()
+    print(style)
 
     climb_arr = []
     for row in rows:
@@ -99,7 +100,7 @@ def queryClimbs():
             gradeDif = "Accurate"
 
         climb['grade_accuracy'] = gradeDif
-        climb['style'] = row[6]
+        climb['style'] = ', '.join(str(row[6]).split(','))
         climb_arr.append(climb)
 
     return render_template("mountainproject.html", climbs = climb_arr)
