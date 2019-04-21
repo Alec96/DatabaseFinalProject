@@ -12,6 +12,7 @@ library(rvest)
 ```
 
 # CSS Selector Functions
+Uses CSS to extract data from the main page of a given route.
 ```{r}
 scrapeName <- function(x) {
   options(timeout= 4000000)
@@ -66,13 +67,8 @@ scrapeRating <- function(x) {
 
 ```
 
+These functions are use for grabbing sub-tables from a given routes statistics page.
 ```{r}
-RTL_STAT <- "https://www.mountainproject.com/route/stats/105945043/ride-the-lightning"
-IJ <- "https://www.mountainproject.com/route/stats/113491812/indiana-jones"
-
-
-html_text(html_nodes(read_html(RTL), ".mb-half.text-warm a"))
-
 getSuggGradeTable<- function(x) {
   tables <- html_table(html_nodes(read_html(x), "table"))
   df <- bind_rows(tables)
@@ -97,7 +93,7 @@ getCommentTable<- function(x) {
 scrapeLinks <- function(url){
   options(timeout= 4000000)
   # Create an html document from the url
-  webpage <- xml2::read_html(url)
+  webpage <- read_html(url)
   # Extract the URLs
   url_ <- webpage %>%
     html_nodes("a") %>%
@@ -163,21 +159,24 @@ Gets Route Links and Stats Links for Given query
 ```{r}
 mp_scraper <- function(x) {
   options(timeout= 4000000)
+  # collects all links from a given page
   all_links <- scrapeLinks(x)
+  # filters links for route links
   route_links <- filter(all_links, grepl("/route/", url))
+  # selects unique urls from list data frame of route links
   route_urls <- as.character(unique(route_links$url))
+  # simple string substitution for finding stats links for a climb
   stat_urls <- as.character(gsub("/route/", "/route/stats/", route_urls))
+  # get data from main climb pahe
   climb_df <- getClimbData(route_urls, stat_urls)
+  # get comments from a given climb
   comment_df <- getAllComments(stat_urls, climb_df$name)
+  # get suggested grades from a given climb
   sugg_grade_df <- getAllSuggestedGrades(stat_urls, climb_df$name)
+  # compresses all tables to a list
   all_tables <- list(climb_df,comment_df, sugg_grade_df)
   return(all_tables)
 }
-test <- mp_scraper(storm_boulder_url)
-
-test_climb <- test[[1]]
-test_comment <- test[[2]]
-test_sugg_grade <- test [[3]]
 ```
 
 
@@ -188,34 +187,44 @@ test_sugg_grade <- test [[3]]
 storm_boulder_url <- "https://www.mountainproject.com/route-finder?selectedIds=106523385&type=boulder&diffMinrock=1800&diffMinboulder=20000&diffMinaid=70000&diffMinice=30000&diffMinmixed=50000&diffMaxrock=5500&diffMaxboulder=21400&diffMaxaid=75260&diffMaxice=36500&diffMaxmixed=60000&is_trad_climb=1&is_sport_climb=1&is_top_rope=1&stars=0&pitches=0&sort1=popularity+desc&sort2=rating"
 
 RTL <- "https://www.mountainproject.com/route/105945043/ride-the-lightning"  
+
+RTL_STAT <- "https://www.mountainproject.com/route/stats/105945043/ride-the-lightning"
+IJ <- "https://www.mountainproject.com/route/stats/113491812/indiana-jones"
+
 ```
 
-# Runs Scraper
+# Running Scraper
 ```{r}
-#storm_boulders_data <- mp_scraper(storm_boulder_url)
+#test <- mp_scraper(storm_boulder_url)
+#test_climb <- test[[1]]
+#test_comment <- test[[2]]
+#test_sugg_grade <- test [[3]]
 setwd("/Users/duncanmuir/Documents/Classwork/S19/CS3200/FinalProj")
 write.csv(test_climb, file = "storm_boulders_data_raw_climbs.csv")
 write.csv(test_comment, file = "storm_boulders_data_raw_comments.csv")
 write.csv(test_sugg_grade, file = "storm_boulders_data_raw_sugg_grades.csv")
-
 ```
 
 
 # Cleaning
 ```{r}
-
 sb_clean <- read.csv("storm_boulders_data_raw.csv")
+# removes row headers
 sb_clean <- select(sb_clean, -X)
+# splits rating by space delimiter
 sb_splitratings <- str_split(sb_clean$ratings, " ")
+# grabs avg rating and votes
 sb_clean$avg.rating <- as.numeric(unlist(lapply(sb_splitratings, `[`, 2)))
 sb_clean$votes <- as.numeric(unlist(lapply(sb_splitratings, `[`, 4)))
+# removes original rating column
 sb_clean <- select(sb_clean, -ratings)
 
+# reomves V from grades
 sb_clean$grades <- gsub("V", "", sb_clean$grades)
+# splits string on +,-,/ or _ delimters, to only leave integer grade
 sb_clean$grades <- as.character(unlist(lapply(str_split(sb_clean$grades, "\\+|\\-|/| "), `[`,1)))
 
-
-
+# assigns any climb with NA for ticks to 0
 sb_clean$ticks[is.na(sb_clean$ticks)] <- 0
 ```
 
