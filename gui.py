@@ -12,6 +12,8 @@ cnx = mysql.connector.connect(user=config.USER, password=config.PASSWORD,
                               auth_plugin='mysql_native_password')
 cursor = cnx.cursor()
 
+#Creates a query based on the inputs
+#Outputs the query, and a dict filled with the parameters that fill out the query
 def getClimbsQuery(name="", style="not applicable", min_grade=1, max_grade=13, min_rating=1, max_rating=4, height=""):
     query = "Select climb_name, climb_description, beta, grade, avg_quality_rating, (grade - avg_sugg_grade), group_concat(type_name) " \
             "from climb " \
@@ -60,10 +62,12 @@ def getClimbsQuery(name="", style="not applicable", min_grade=1, max_grade=13, m
     sql = sql + " order by avg_quality_rating desc"
     return sql, params
 
+#Get the homepage
 @app.route('/', methods=['GET'])
 def getClimbs():
     return render_template("mountainproject.html")
 
+#Get the results
 @app.route('/', methods=['POST'])
 def queryClimbs():
 
